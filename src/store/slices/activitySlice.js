@@ -131,3 +131,4 @@ const activitySlice = createSlice({
 export const { addActivity, updateActivityInList, removeActivity } = activitySlice.actions
 export default activitySlice.reducer
 
+
