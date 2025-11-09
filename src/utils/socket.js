@@ -29,24 +29,38 @@ export const connectSocket = (token) => {
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionAttempts: 5,
-    path: '/socket.io/'
+    path: '/socket.io/',
+    forceNew: true,
+    timeout: 20000,
+    autoConnect: true
   })
 
   socket.on('connect', () => {
-    console.log('Socket connected successfully to:', SOCKET_URL)
+    console.log('✅ Socket connected successfully to:', SOCKET_URL)
+    console.log('Socket ID:', socket.id)
   })
 
   socket.on('disconnect', (reason) => {
-    console.log('Socket disconnected:', reason)
+    console.log('⚠️ Socket disconnected:', reason)
+    if (reason === 'io server disconnect') {
+      // Server disconnected the socket, try to reconnect
+      socket.connect()
+    }
   })
 
   socket.on('connect_error', (error) => {
-    console.error('Socket connection error:', error.message || error)
+    console.error('❌ Socket connection error:', error.message || error)
     console.error('Attempted to connect to:', SOCKET_URL)
+    console.error('Error details:', {
+      message: error.message,
+      description: error.description,
+      context: error.context,
+      type: error.type
+    })
   })
 
   socket.on('error', (error) => {
-    console.error('Socket error:', error)
+    console.error('❌ Socket error:', error)
   })
 
   return socket
